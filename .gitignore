@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.pyc
+
+# Virtual environment
+venv/
+
+# Secrets
+cookies.json
+
+# RAG / FAISS cache
+rag_cache/
+
+# OS
+.DS_Store
+Thumbs.db

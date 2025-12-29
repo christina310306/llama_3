@@ -1,0 +1,1892 @@
+
+
+Assignment-3 Vault of Codes
+Project -1: To_do List
+from flask import Flask, render_template, url_for,request,redirect
+import random
+app = Flask(__name__)
+
+todos = [
+    {'id': 1, 'name': 'Write SQL', 'checked': False},
+    {'id': 2, 'name': 'Write Python', 'checked': True}
+]
+@app.route("/", methods=["GET", "POST"])
+@app.route("/home", methods=["GET", "POST"])
+def home():
+    if request.method == "POST":
+        todo_name = request.form.get("todo_name")  # Corrected this line
+        cur_id = random.randint(1, 1000)
+        todos.append({
+            'id': cur_id,
+            'name': todo_name,
+            'checked': False
+        })
+    return render_template("index.html", items=todos)
+@app.route("/checked/<int:todo_id>",methods=["POST"])
+def checked_todo(todo_id):
+    for todo in todos:
+        if todo['id']==todo_id:
+            todo['checked']= not todo['checked']
+            break
+    return redirect(url_for("home"))
+@app.route("/delete/<int:todo_id>",methods=["POST"])
+def delete_todo(todo_id):
+    global todos
+    for todo in todos:
+        if todo['id']== todo_id:
+            todos.remove(todo)
+        return redirect(url_for("home"))
+
+if __name__ == "__main__":
+   app.run(debug=True, port=5050)
+
+
+
+Project -2:Quiz Game
+questions = [
+    {
+        "q": "Which data type is immutable in Python?",
+        "choices": ["list", "set", "tuple", "dictionary"],
+        "answer": 3,  # 1-based index
+        "explanation": "Tuples are immutable; lists and sets are mutable."
+    },
+    {
+        "q": "What does HTTP stand for?",
+        "choices": [
+            "HyperText Transfer Protocol",
+            "High Transfer Text Protocol",
+            "Hyperlink Transfer Text Program",
+            "HyperText Transmission Protocol"
+        ],
+        "answer": 1,
+        "explanation": "HTTP stands for HyperText Transfer Protocol."
+    },
+    {
+        "q": "Which algorithm is commonly used for shortest paths in weighted graphs?",
+        "choices": [
+            "Kruskal's algorithm",
+            "Dijkstra's algorithm",
+            "Bubble sort",
+            "Prim's algorithm"
+        ],
+        "answer": 2,
+        "explanation": "Dijkstra's algorithm finds shortest paths from a source to all vertices with non-negative weights."
+    },
+    {
+        "q": "In OOP, what is 'inheritance'?",
+        "choices": [
+            "Binding data and methods into a single unit",
+            "Exchanging messages between objects",
+            "Ability of a class to derive properties from another class",
+            "Hiding implementation details"
+        ],
+        "answer": 3,
+        "explanation": "Inheritance allows a class to inherit attributes and methods from another class."
+    }
+]
+
+score = 0
+attempts = 0
+review = []
+
+print("MCQ Quiz Game")
+print("-" * 30)
+
+for i, q in enumerate(questions, start=1):
+    print(f"\nQuestion {i}: {q['q']}")
+    for idx, choice in enumerate(q["choices"], start=1):
+        print(f"  {idx}. {choice}")
+
+    ans = input("Your answer (number): ").strip()
+    if not ans.isdigit():
+        print("Invalid input, skipping.")
+        review.append((q, None))
+        continue
+
+    ans = int(ans)
+    attempts += 1
+    if ans == q["answer"]:
+        print(" Correct!")
+        score += 1
+        review.append((q, True))
+    else:
+        print(f" Incorrect! Correct answer: {q['answer']}. {q['choices'][q['answer']-1]}")
+        review.append((q, False))
+
+    print("Explanation:", q["explanation"])
+
+print("\n" + "=" * 40)
+print(f"Quiz Finished! Score: {score}/{attempts} ({score/attempts*100:.1f}%)")
+print("=" * 40)
+
+print("\nReview:")
+for i, (q, correct) in enumerate(review, start=1):
+    status = "Correct" if correct else "Incorrect"
+    print(f"{i}. {q['q']} — {status}")
+    print(f"   Answer: {q['choices'][q['answer']-1]}")
+
+
+[I am using online compiler as I have issues with my VS code]
+                                Project -3:Expense Tracker
+
+FILE_NAME = "expenses.txt"
+
+def add_expense():
+    date = input("Enter date (YYYY-MM-DD): ").strip()
+    description = input("Enter description: ").strip()
+    amount = input("Enter amount: ").strip()
+
+    # Save to file
+    with open(FILE_NAME, "a") as f:
+        f.write(f"{date},{description},{amount}\n")
+
+    print(" Expense added successfully!")
+
+def view_expenses():
+    try:
+        with open(FILE_NAME, "r") as f:
+            lines = f.readlines()
+
+        if not lines:
+            print("No expenses recorded yet.")
+            return
+
+        print("\n Expense List:")
+        print("-" * 40)
+        total = 0
+        for line in lines:
+            date, description, amount = line.strip().split(",")
+            print(f"{date} | {description} | ₹{amount}")
+            total += float(amount)
+        print("-" * 40)
+        print(f"Total: ₹{total:.2f}")
+
+    except FileNotFoundError:
+        print("No expenses found. Add some first!")
+
+def main():
+    while True:
+        print("\n==== Expense Tracker ====")
+        print("1. Add Expense")
+        print("2. View Expenses")
+        print("3. Exit")
+        choice = input("Choose an option: ").strip()
+
+        if choice == "1":
+            add_expense()
+        elif choice == "2":
+            view_expenses()
+        elif choice == "3":
+            print("Goodbye!")
+            break
+        else:
+            print("Invalid choice, try again.")
+
+if __name__ == "__main__":
+    main()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                Project -4:Contact Book
+# Contact Book - Save, Search, View Contacts
+FILE_NAME = "contacts.txt"
+
+def add_contact():
+    name = input("Enter name: ").strip()
+    phone = input("Enter phone number: ").strip()
+    email = input("Enter email: ").strip()
+
+    with open(FILE_NAME, "a") as f:
+        f.write(f"{name},{phone},{email}\n")
+
+    print(" Contact added successfully!")
+
+def view_contacts():
+    try:
+        with open(FILE_NAME, "r") as f:
+            lines = f.readlines()
+
+        if not lines:
+            print("No contacts found.")
+            return
+
+        print("\n Contact List:")
+        print("-" * 40)
+        for line in lines:
+            name, phone, email = line.strip().split(",")
+            print(f"Name: {name} | Phone: {phone} | Email: {email}")
+        print("-" * 40)
+
+    except FileNotFoundError:
+        print("No contacts found. Add some first!")
+
+def search_contacts():
+    keyword = input("Enter name or phone to search: ").strip().lower()
+    found = False
+
+    try:
+        with open(FILE_NAME, "r") as f:
+            for line in f:
+                name, phone, email = line.strip().split(",")
+                if keyword in name.lower() or keyword in phone:
+                    print(f"\n Match Found:")
+                    print(f"Name: {name} | Phone: {phone} | Email: {email}")
+                    found = True
+
+        if not found:
+            print("No matching contact found.")
+
+    except FileNotFoundError:
+        print("No contacts found. Add some first!")
+
+def main():
+    while True:
+        print("\n==== Contact Book ====")
+        print("1. Add Contact")
+        print("2. View Contacts")
+        print("3. Search Contact")
+        print("4. Exit")
+        choice = input("Choose an option: ").strip()
+
+        if choice == "1":
+            add_contact()
+        elif choice == "2":
+            view_contacts()
+        elif choice == "3":
+            search_contacts()
+        elif choice == "4":
+            print("Goodbye!")
+            break
+        else:
+            print("Invalid choice, try again.")
+
+if __name__ == "__main__":
+    main()
+
+
+
+Assignment -3 Vault of Codes  
+Project -1: To_do List  
+from flask import Flask, render_template, 
+url_for,request,redirect  
+import random  
+app = Flask(__name__)  
+ 
+todos = [  
+    {'id': 1, 'name': 'Write SQL', 'checked': False},  
+    {'id': 2, 'name': 'Write Python', 'checked': True}  
+] 
+@app.route("/", methods=["GET", "POST"])  
+@app.route("/home", methods=["GET", "POST"])  
+def home():  
+    if request.method == "POST":  
+        todo_name = request.form.get("todo_name")  # 
+Corrected this line  
+        cur_id = random.randint(1, 1000)  
+        todos.append({  
+            'id': cur_id,              'name': todo_name,  
+            'checked': False  
+        }) 
+    return render_template("index.html", items=todos)  
+@app.route("/checked/<int:todo_id>",methods=["POST"])  
+def checked_todo(todo_id):  
+    for todo in todos:  
+        if todo['id']==todo_id:  
+            todo['checked']= not todo['checked']  
+            break  
+    return redirect(url_for("home"))  
+@app.route("/delete/<int:todo_id>",methods=["POST"])  
+def delete_todo(todo_id):  
+    global todos  
+    for todo in todos:  
+        if todo['id']== todo_id:  
+            todos.remove(todo)  
+        return redirect(url_for("home"))  
+ if __name__ == "__main__":  
+   app.run(debug=True, port=5050)  
+ 
+ 
+  
+Project -2:Quiz Game  
+questions = [  
+    { 
+        "q": "Which data type is immutable in Python?",  
+        "choices": ["list", "set", "tuple", "dictionary"],  
+        "answer": 3,  # 1 -based index  
+        "explanation": "Tuples are immutable; lists and sets are 
+mutable."  
+    }, 
+    { 
+        "q": "What does HTTP stand for?",  
+        "choices": [  
+            "HyperText Transfer Protocol",  
+            "High Transfer Text Protocol",  
+            "Hyperlink Transfer Text Program",  
+            "HyperText Transmission Protocol"  
+        ], 
+        "answer": 1,  
+        "explanation": "HTTP stands for HyperText Transfer 
+Protocol."      }, 
+    { 
+        "q": "Which algorithm is commonly used for shortest 
+paths in weighted graphs?",  
+        "choices": [  
+            "Kruskal's algorithm",  
+            "Dijkstra's algorithm",  
+            "Bubble sort",  
+            "Prim's algorithm"  
+        ], 
+        "answer": 2,  
+        "explanation": "Dijkstra's algorithm finds shortest paths 
+from a source to all vertices with non -negative weights."  
+    }, 
+    { 
+        "q": "In OOP, what is 'inheritance'?",  
+        "choices": [  
+            "Binding data and methods into a single unit",  
+            "Exchanging messages between objects",              "Ability of a class to derive properties from another 
+class",  
+            "Hiding implementation details"  
+        ], 
+        "answer": 3,  
+        "explanation": "Inheritance allows a class to inherit 
+attributes and methods from another class."  
+    } 
+] 
+ 
+score = 0  
+attempts = 0  
+review = []  
+ 
+print("MCQ Quiz Game")  
+print("-" * 30)  
+ 
+for i, q in enumerate(questions, start=1):  
+    print(f"\nQuestion {i}: {q['q']}")  
+    for idx, choice in enumerate(q["choices"], start=1):          print(f"  {idx}. {choice}")  
+ 
+    ans = input("Your answer (number): ").strip()  
+    if not ans.isdigit():  
+        print("Invalid input, skipping.")  
+        review.append((q, None))  
+        continue  
+ 
+    ans = int(ans)  
+    attempts += 1  
+    if ans == q["answer"]:  
+        print(" Correct!")  
+        score += 1  
+        review.append((q, True))  
+    else:  
+        print(f" Incorrect! Correct answer: {q['answer']}. 
+{q['choices'][q['answer'] -1]}")  
+        review.append((q, False))  
+     print("Explanation:", q["explanation"])  
+ 
+print("\n" + "=" * 40)  
+print(f"Quiz Finished! Score: {score}/{attempts} 
+({score/attempts*100:.1f}%)")  
+print("=" * 40)  
+ 
+print("\nReview:")  
+for i, (q, correct) in enumerate( review, start=1):  
+    status = "Correct" if correct else "Incorrect"  
+    print(f"{i}. {q['q']} — {status}")  
+    print(f"   Answer: {q['choices'][q['answer'] -1]}")  
+ 
+ 
+[I am using online compiler as I have issues with my VS 
+code]  
+                                Project -3:Expense Tracker  
+ 
+FILE_NAME = "expenses.txt"  
+ 
+def add_expense():  
+    date = input("Enter date (YYYY -MM-DD): ").strip()  
+    description = input("Enter description: ").strip()  
+    amount = input("Enter amount: ").strip()  
+ 
+    # Save to file  
+    with open(FILE_NAME, "a") as f:  
+        f.write(f"{date},{description},{amount} \n") 
+ 
+    print(" Expense added successfully!")  
+ 
+def view_expenses():  
+    try: 
+        with open(FILE_NAME, "r") as f:  
+            lines = f.readlines()   
+        if not lines:  
+            print("No expenses recorded yet.")  
+            return  
+ 
+        print("\n Expense List:")  
+        print("-" * 40)  
+        total = 0  
+        for line in lines:  
+            date, description, amount = line.strip().split(",")  
+            print(f"{date} | {description} | ₹{amount}")  
+            total += float(amount)  
+        print("-" * 40)  
+        print(f"Total: ₹{total:.2f}")  
+ 
+    except FileNotFoundError:  
+        print("No expenses found. Add some first!")  
+ 
+def main():      while True:  
+        print("\n==== Expense Tracker ====")  
+        print("1. Add Expense")  
+        print("2. View Expenses")  
+        print("3. Exit")  
+        choice = input("Choose an option: ").strip()  
+ 
+        if choice == "1":  
+            add_expense()  
+        elif choice == "2":  
+            view_expenses()  
+        elif choice == "3":  
+            print("Goodbye!")  
+            break  
+        else:  
+            print("Invalid choice, try again.")  
+ 
+if __name__ == "__main__":  
+    main()   
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+                                Project -4:Contact Book  
+# Contact Book - Save, Search, View Contacts  
+FILE_NAME = "contacts.txt"  
+ 
+def add_contact():  
+    name = input("Enter name: ").strip()  
+    phone = input("Enter phone number: ").strip()  
+    email = input("Enter email: ").strip()  
+ 
+    with open(FILE_NAME, "a") as f:  
+        f.write(f"{name},{phone},{email} \n") 
+ 
+    print(" Contact added successfully!")  
+ 
+def view_contacts():  
+    try: 
+        with open(FILE_NAME, "r") as f:  
+            lines = f.readlines()  
+         if not lines:  
+            print("No contacts found.")  
+            return  
+ 
+        print("\n Contact List:")  
+        print("-" * 40)  
+        for line in lines:  
+            name, phone, email = line.strip().split(",")  
+            print(f"Name: {name} | Phone: {phone} | Email: 
+{email}")  
+        print("-" * 40)  
+ 
+    except FileNotFoundError:  
+        print("No contacts found. Add some first!")  
+ 
+def search_contacts():  
+    keyword = input("Enter name or phone to search: 
+").strip().lower()  
+    found = False  
+     try: 
+        with open(FILE_NAME, "r") as f:  
+            for line in f:  
+                name, phone, email = line.strip().split(",")  
+                if keyword in name.lower() or keyword in phone:  
+                    print(f"\n Match Found:")  
+                    print(f"Name: {name} | Phone: {phone} | Email: 
+{email}")  
+                    found = True  
+ 
+        if not found:  
+            print("No matching contact found.")  
+ 
+    except FileNotFoundError:  
+        print("No contacts found. Add some first!")  
+ 
+def main():  
+    while True:  
+        print("\n==== Contact Book ====")          print("1. Add Contact")  
+        print("2. View Contacts")  
+        print("3. Search Contact")  
+        print("4. Exit")  
+        choice = input("Choose an option: ").strip()  
+ 
+        if choice == "1":  
+            add_contact()  
+        elif choice == "2":  
+            view_contacts()  
+        elif choice == "3":  
+            search_contacts()  
+        elif choice == "4":  
+            print("Goodbye!")  
+            break  
+        else:  
+            print("Invalid choice, try again.")  
+ 
+if __name__ == "__main__":      main()  
+ 
+ 
+
+
+                                                                   
+Assignment 1: Code Review and Error Correction 
+Objective: Identify, correct, and explain errors in Python code snippets to reinforce understanding of syntax and logic. 
+ 
+Instructions: 
+For each code snippet below, do the following: 
+**Identify** the errors in the code. 
+**Rewrite** the corrected code. 
+**Explain** each error and why the correction works. 
+ 
+Code Snippets 
+ 
+**Code Snippet 1**                                                                 
+
+Correct Code:                                        Error:
+                                                                            Missing of the colon
+ def add_numbers(a, b):                            Explanation:
+    return a + b                                                            All function should end with colon
+print(add_numbers(5, 10))
+**Code Snippet 2** 
+                      Error:
+                                                                                                      Missing of an double-quotation
+Correct Code:                                                               Explanation:
+Name=”Alice”                                                                          All String Should be inside quotation
+Print(“Hello,” + name)
+    
+ 
+ 
+ 
+**Code Snippet 3**                                                        Error:
+                                                                                                   Missing of the colon in the end of for loop
+            Explanation: 
+                                                                                                         All loops should end with colon     
+Correct Code:
+       for I in range(5):
+               print(“Number:”,i)
+                                                                                    
+
+**Code Snippet 4** 
+
+ 
+Correct Code:                                                     Error:
+my_list = [1, 2, 3, 4, 5]                                                 1) my_list[5} Out of range
+print("The fifth element is: " + str(my_list[4]))       2)Can’t Concatenate   
+                                                                                             string with int
+Explanation:
+1) my_list[5] is out of range (valid indexes: 0 to 4)………[ my_list[4] is the fifth element.]
+2)  Can't concatenate a string with an integer using +.
+Must convert the number to string using str().
+
+5.**Code Snippet 5**                                                        
+ 
+Error: Indented block     
+
+Explanation: Python requires codeinside functions to be indented        
+        (typically 4 spaces or 1 tab).
+       
+       Correct Code:
+               def greet(name):
+                    print(“Hello” + name)
+                greet(‘Bob”)
+
+
+
+                               
+                                                
+6.**Code Snippet 6** 
+
+Correct Code                                                              Error:
+age = int(input("Enter your age: "))                              It returns a str(),but 
+if age >= 18:                                                                  comparing with int(18) 
+    print("You are eligible to vote.")
+else:                                                                        Explanation:
+    print("You are not eligible to vote.")                  int(input(...)) 
+                                                                             converts the string to an int
+
+7.**Code Snippet 7** 
+ 
+Correct Code:                                           
+def multiply(a, b):               
+      result = a * b                              
+      return result
+print(multiply(4, 5))
+ 
+ Error:
+      Intendation error
+Explanation:
+         Return statement should me inside function
+ 
+ 
+ 
+8.**Code Snippet 8** 
+ 
+ Correct Code:
+     count = 10
+while count > 0:                                   Error:
+    print(count)                                         Missing of colon
+    count -= 1                                          Explanation:
+                                                                      All loop should end with colon
+print("Countdown complete!")
+Submission Guidelines: 
+Write the corrected code in a file with explanations of errors  
+Format:  
+Write the error  
+Write corrected code  
+Explain the error  
+Submit this file in pdf.  
+ 
+Task2:  
+Create a presentation on topic  
+-Introduction and history of Python  
+-Functions & Modules  
+Submit in a different pdf format 
+ 
+Deliverables: 
+-2 PDF Files, Task1 & Task 2. Task 2 may also be submitted in PPT format. 
+ 
+Submission Link: 
+https://forms.gle/hVz9kr1d2ddYXkTB9 
+ 
+ 
+ 
+
+                                                                    
+Assignment 1: Code Review and Error Correction  
+Objective: Identify, correct, and explain errors in Python code snippets to reinforce understanding of 
+syntax and logic.  
+  
+Instructions:  
+For each code snippet below, do the following:  
+1. **Identify** the errors in the code.  
+2. **Rewrite** the corrected code.  
+3. **Explain** each error and why the correction works.  
+  
+Code Snippets  
+  
+1. **Code Snippet 1**                                                                  
+ 
+Correct Code:                                        Error:  
+                                                                            Missing of the colon  
+ def add_numbers(a, b):                            Explanation:  
+    return a + b                                                            All function should end with colon  
+print(add_ numbers(5, 10))  
+2. **Code Snippet 2**  
+                      Error:  
+                                                                                                      Missing of an double -quotation  
+Correct Code:                                                                Explanation:  
+Name=” Alice”                                                                          All String Should be inside quotation  
+Print(“Hello,” + name)  
+     
+  
+  
+  
+3. **Code Snippet 3**                                                        Error:  
+                                                                                                   Missing of the colon in the end of for loop  
+            Explanation:   
+                                                                                                         All loops should end with colon      
+Correct Code:  
+       for I in range(5):  
+               print(“Number:”,i)  
+                                                                                     
+ 
+4. **Code Snippet 4**  
+ 
+  
+Correct Code:                                                      Error:  
+my_list = [1, 2, 3, 4, 5]                                                 1) my_list[5} Out of range  
+print("The fifth element is: " + str(my_list[4]))        2)Can’t Concatenate    
+                                                                                             string with int  
+Explanation:  
+1) my_list[5] is out of range  (valid indexes: 0 to 4) ………[ my_list[4] is the 
+fifth element .] 
+2)  C an't concatenate a string with an integer  using +.  
+Must convert the number to string using str().  
+ 
+5.**Code Snippet 5**                                                         
+  
+Error:  Indented block      
+ 
+Explanation:  Python requires 
+code inside functions  to be indented          
+        (typically 4 spaces or 1 tab).  
+        
+       Correct Code:  
+               def greet(name):  
+                    print(“Hello” + name)  
+                greet(‘Bob”)  
+ 
+ 
+ 
+                                
+                                                 
+6.**Code Snippet 6**  
+ 
+Correct Code                                                              Error:  
+age = int(input("Enter your age: "))                              It returns a str(),but  
+if age >= 18:                                                                  comparing with int(18)  
+    print("You are eligible to vote.")  
+else:                                                                         Explanation:  
+    print("You are not eligible to vote.")                   int(input(...))  
+                                                                             converts the string to an int  
+ 
+7.**Code Snippet 7**  
+  
+Correct Code:                                            
+def multiply(a, b):                 
+      result = a * b                                
+      return result  
+print(multiply(4, 5))  
+  
+ Error:  
+      Intendation error  
+Explanation:  
+         Return statement should me inside function  
+  
+  
+  
+8.**Code Snippet 8**  
+  
+ Correct Code:  
+     count = 10  
+while count > 0:                                    Error:  
+    print(count)                                          Missing of colon  
+    count -= 1                                          Explanation:  
+                                                                      All loop should end with colon  
+print("Countdown complete!")  
+Submission Guidelines:  
+Write the corrected code in a file with explanations of errors   
+Format:   
+Write the error   
+Write corrected code   
+Explain the error   
+Submit this file in pdf.   
+  
+Task2:   
+Create a presentation on topic   
+-Introduction and history of Python   
+-Functions & Modules   
+Submit in a different pdf format  
+  
+Deliverables:  
+-2 PDF Files, Task1 & Task 2. Task 2 may also be submitted in PPT format.  
+  
+Submission Link:   
+https://forms.gle/hVz9kr1d2ddYXkTB9   
+  
+  
+  
+
+Get star t ed with
+Micr oso f t OneDriv e
+Save your files to OneDrive to keep them protected, 
+backed up, and accessible from all your devices, anywhere.
+Anywher e access
+OneDrive.com
+OneDrive mobile appWith  and the
+you can
+create, access and edit your files 
+from all your devices, virtually 
+anywhere you happen to be.
+Cloud st orage
+Learn how to upload filesOneDrive provides one secured 
+place for your files and photos.  S tart with 5 GB of free storage or upgrade to Microsoft 365 for 1 TB.
+PC folder b ackup
+How to set up PC folder backupTurn on PC folder backup to automatically back up and sync  your Desktop, Documents, and Pictures folders to OneDrive.
+Office int egrationOffice for the web
+Learn how to use Office for the webOneDrive works seamlessly with 
+. Use W ord, 
+P owerP oint, and Excel for free to 
+easily create, edit, and share files. 
+Shar e and collaborat eLearn how to share filesShare documents, folders, and 
+photos with anyone. They don’t  
+need an account to view, edit or 
+collaborate in real-time on the file.
+SecurityP ersonal 
+V ault, Ransomware detection and 
+recovery,1With security features like 
+ 
+ a n d  f i l e  e n c r y p t i o n  y o u r   
+w o r k  a n d  m e m o r i e s  a r e  a l w a y s  s e c u r e d .1R equires a Microsoft 365 P ersonal or F amily subscription.
+Get mor e featur es
+with the mobile app
+Aut omatic camera
+r oll b ackup
+iOS AndroidAutomatically back up your
+phone’s photos and videosso you never lose a memory.
+Learn more: or 
+Scan and sav e  
+p aper documents
+iOS AndroidUse your phone to scan and
+store paper documents, receipts or whiteboard notesin your OneDrive.
+Learn more: or 
+OneDrive help center For more information about OneDrive visit the
+Be mor e cr eativ e, or ganized and secur e with 
+Micr oso f t 365Access, edit, and share files with  
+1 TB of OneDrive cloud storage.
+
+Protect your files and photos with  
+advanced security.
+
+Get premium apps like W ord, Excel, 
+P owerP oint and more for all your devices.
+OneDrive plansFor more about Microsoft 365 
+visit 
+
+
+                                                            FINAL PROJECT -AUTOSPEECH  
+Code And Output:
+ 
+import speech_recognition as sr 
+import os 
+import wave  
+import pyaudio  
+ 
+class SpeechRecognitionSystem : 
+    def __init__(self): 
+        self.recognizer  = sr.Recognizer()  
+        self.microphone  = sr.Microphone()  
+ 
+    def list_microphones (self): 
+        """List available microphones."""  
+        mic_list = sr.Microphone.list_microphone_names()  
+        if mic_list: 
+            print("Available Microphones:" ) 
+            for i, mic_name  in enumerate (mic_list): 
+                print(f"{i}: {mic_name }") 
+        else: 
+            print("No microphones found." ) 
+ 
+    def record_audio (self, duration=5, output_file ="recorded.wav" ): 
+        """Record audio from the microphone and save it to a file."""  
+        try: 
+            print("Recording audio..." ) 
+            # Ensure the output directory exists  
+            output_dir  = os.path.dirname(output_file ) 
+            if output_dir :  # Only create the directory if it is not empty  
+                os.makedirs (output_dir , exist_ok=True) 
+ 
+            audio_interface  = pyaudio.PyAudio() 
+            stream = audio_interface .open( 
+                format=pyaudio.paInt16, 
+                channels =1, 
+                rate=44100, 
+                input=True, 
+                frames_per_buffer =1024  
+            ) 
+ 
+            frames = []             for _ in range(0, int(44100 / 1024 * duration)): 
+                data = stream.read(1024) 
+                frames.append(data) 
+ 
+            print("Recording complete." ) 
+            stream.stop_stream () 
+            stream.close() 
+            audio_interface .terminate () 
+ 
+            with wave.open(output_file , "wb") as wf: 
+                wf.setnchannels (1) 
+                wf.setsampwidth (audio_interface .get_sample_size (pyaudio.paInt16)) 
+                wf.setframerate (44100) 
+                wf.writeframes (b"".join(frames)) 
+ 
+            print(f"Audio saved to {output_file }") 
+            return output_file  
+        except OSError as e: 
+            print(f"Error accessing microphone: {e}") 
+        except Exception  as e: 
+            print(f"An error occurred: {e}") 
+ 
+    def transcribe_audio_file (self, file_path): 
+        """Transcribe an audio file to text."""  
+        try: 
+            with sr.AudioFile( file_path) as source:                 print("Processing audio file..." ) 
+                audio_data  = self.recognizer .record(source) 
+                text = self.recognizer .recognize_google( audio_data ) 
+                print("Transcription complete." ) 
+                return text  
+        except FileNotFoundError : 
+            return "Audio file not found. Please check the file path."  
+        except sr.UnknownValueError:  
+            return "Could not understand the audio."  
+        except sr.RequestError as e: 
+            return f"API unavailable or unresponsive: {e}" 
+ 
+    def transcribe_live_audio (self): 
+        """Transcribe live audio from the microphone."""  
+        try: 
+            print("Please speak into the microphone." ) 
+            with self.microphone  as source: 
+                self.recognizer .adjust_for_ambient_noise( source) 
+                audio_data  = self.recognizer .listen(source) 
+                text = self.recognizer .recognize_google( audio_data ) 
+                print("You said:" , text) 
+                return text  
+        except OSError: 
+            return "Microphone not accessible. Please check your device."  
+        except sr.UnknownValueError:  
+            return "Could not understand the audio."          except sr.RequestError as e: 
+            return f"API unavailable or unresponsive: {e}" 
+ 
+if __name__  == "__main__" : 
+    asr = SpeechRecognitionSystem () 
+ 
+    while True: 
+        print("\nChoose an option:" ) 
+        print("1. List available microphones" ) 
+        print("2. Record audio" ) 
+        print("3. Transcribe audio file" ) 
+        print("4. Transcribe live audio" ) 
+        print("5. Exit") 
+ 
+        choice = input("Enter your choice: " ) 
+ 
+        if choice == "1": 
+            asr.list_microphones () 
+        elif choice == "2": 
+            try: 
+                duration = int(input("Enter recording duration in seconds: " )) 
+                file_name  = input("Enter output file name (default: recorded.wav): " ) or 
+"recorded.wav"  
+                asr.record_audio (duration, file_name ) 
+            except ValueError : 
+                print("Invalid input. Please enter a valid duration." )         elif choice == "3": 
+            file_path = input("Enter the path to the audio file: " ) 
+            transcription  = asr.transcribe_audio_file (file_path ) 
+            print("Transcription:" , transcription ) 
+        elif choice == "4": 
+            transcription  = asr.transcribe_live_audio () 
+            print("Transcription:" , transcription ) 
+        elif choice == "5": 
+            print("Exiting the program." ) 
+            break  
+        else: 
+            print("Invalid choice. Please try again." ) 
+ 
+
+ 
+From ,  
+Boaz Psychiatric  Cent re 
+ Santhospuram, Medavakkam  
+Chennai ,Tamil Nadu  
+ 
+Date: April 12, 2025  
+ 
+To, 
+Manish K, Tarunkumar S, Shan Neeraj, Rithish Karthikeyan , Christina Ivanka Jothie  
+B.Tech CSE Core  
+SRM Institute of Science and Technology  
+SRM Nagar, Kattankulathur - 603 203  
+Chengalpattu District, Tamil Nadu  
+ 
+Subject: Acceptance of Volunteering Request under Community Connect Credit Course  
+ 
+Dear Students,  
+ 
+Greetings from Boaz Psychiatric Centre.  
+ 
+We are pleased to inform you that your request to volunteer at our centre under the 
+Community Connect Credit Course has been accepted. We appreciate your interest in 
+contributing to our work and are confident that your participation will be mutually 
+beneficial.  
+ 
+Your volunteering tenure is scheduled to begin from June 1st, 2025, as mentioned in your 
+request. During this period, you will have the opportunity to engage in meaningful activities 
+that support our mission of mental health care and rehabilitation.  
+ 
+As requested, upon the successful completion of your volunteering period, we will provide 
+the following documents:  
+ 
+  
+- An Acceptance Letter (this letter)  
+- A Completion Certificate  
+- An Attendance Certificate indicating total service hours  
+ 
+We look forward to working with you and hope this experience will enrich your academic 
+and personal development.  
+ 
+Wishing you all the very best.  
+ 
+Warm regards,  
+ 
+[Authorized Signatory Name]  
+ 
+[Designation]  
+ 
+Boaz Psychiatric Centre  
+(With official stamp and signature)  
+ 
+
+
+ 
+FAKE NEWS DETECTION 
+A PROJECT REPORT
+
+Submitted By
+
+CHRISTINA IVANKA JOTHIE [RA2311003012104]
+NANDHINI P [RA2311003012101]
+RAHUL S NAMBIAR[RA2311003012078]
+RICKY SHAAN S [RA2311003012080]
+
+Under the Guidance of
+
+Mr. GOWTHAM R
+
+
+in partial fulfillment of the requirements for the degree of
+
+BACHELOR OF TECHNOLOGY
+in
+COMPUTER SCIENCE AND ENGINEERING 
+
+
+
+DEPARTMENT OF COMPUTING TECHNOLOGIES COLLEGE OF ENGINEERING AND TECHNOLOGY
+SRM INSTITUTE OF SCIENCE AND             TECHNOLOGY
+KATTANKULATHUR- 603203
+November 2025
+
+
+            
+
+
+
+
+
+
+
+SRM INSTITUTE OF SCIENCE AND TECHNOLOGY KATTANKULATHUR – 603 203
+
+BONAFIDE CERTIFICATE
+
+
+
+
+Certified that 21CSC305P – Machine Learning report titled “FAKE NEWS DETECTION ” is the bonafide work of “CHRISTINA IVANKA JOTHIE [RA2311003012104], NANDHINI P [RA2311003012101], RAHUL S NAMBIAR [RA2311003012078], RICKY SHAAN S [RA2311003012080]” who carried out the project work under my supervision. Certified further, that to the best of my knowledge the work reported herein does not form any other project report or dissertation on the basis of which a degree or award was conferred on an earlier occasion on this or any other candidate.
+
+
+
+
+
+
+
+                                                                               		 
+                SIGNATURE	                                   			 SIGNATURE
+    	  Mr. Gowtham R	                           	                       	 Dr. G Niranjana	
+
+
+
+
+
+
+
+
+
+
+
+ACKNOWLEDGEMENTS
+              
+We express our humble gratitude to Dr. C. Muthamizhchelvan, Vice-Chancellor, SRM Institute of Science      and Technology, for the facilities extended for the project work and his continued support.
+
+ We extend our sincere thanks to Dr. Leenus Jesu Martin M, Dean-CET, SRM Institute of Science and Technology, for his invaluable support. 
+
+ We wish to thank Dr. Revathi Venkataraman, Professor and Chairperson, School of Computing, SRM Institute of Science and Technology, for her support throughout the project work. 
+
+ We encompass our sincere thanks to, Dr. M. Pushpalatha, Professor and Associate Chairperson - CS, School of Computing and Dr. Lakshmi, Professor and Associate Chairperson -AI, School of Computing, SRM Institute of Science and Technology, for their invaluable support.
+
+ We are incredibly grateful to our Head of the Department, Dr. G. Niranjana, Professor, Department of Computing Technologies, SRM Institute of Science and Technology, for her suggestions and encouragement at all the stages of the project work. 
+
+We want to convey our thanks to our Project Coordinators, Panel Head, and Panel Members Department of Computing Technologies, SRM Institute of Science and Technology, for their inputs during the project reviews and support.
+ 
+ We register our immeasurable thanks to our Faculty Advisor, Dr. Arulmurugan M, Department of Computing Technologies, SRM Institute of Science and Technology, for leading and helping us to complete our course.
+ 
+Our inexpressible respect and thanks to our guide, Mr. Gowtham R, Department of Computing Technologies, SRM Institute of Science and Technology, for providing us with an opportunity to pursue our project under his mentorship. He provided us with the freedom and support to explore the research topics of our interest. His passion for solving problems and making a difference in the world has always been inspiring. 
+
+We sincerely thank all the students of Computing Technologies, School of Computing, S.R.M Institute of Science and Technology, for their help during our project. Finally, we would like to thank our parents, family members, and friends for their unconditional love, constant support and encouragement
+
+Christina Ivanka Jothie [RA2311003012104]
+Nandhini P [RA2311003012101]
+Rahul S Nambiar [RA2311003012078]
+Ricky Shaan S [RA2311003012080]
+
+
+
+
+
+												
+ABSTRACT
+
+  The proliferation of misinformation and fake news across digital media has become a critical challenge
+  in contemporary society, affecting public opinion, political discourse, and societal trust in information 
+  sources. This project presents a comprehensive machine learning approach to detect and classify false
+ news statements versus authentic ones through binary classification. Utilizing the LIAR dataset comprising 12,514
+ statements with verified veracity labels, this project employs multiple classification algorithms including Logistic Regression, Decision Trees, Gradient Boosting, and Random Forest classifiers. The text data undergoes comprehensive preprocessing, including tokenization, removal of special characters, and feature extraction using Term Frequency-Inverse Document Frequency (TF-IDF) vectorization with unigram and bigram representations. The implementation achieved an accuracy of 74.20% on the test dataset using Logistic Regression, with Gradient Boosting reaching 74.51% accuracy. Advanced visualization methods including ROC curves, feature importance analysis, scatter plots of predictions, and text length distribution analysis provide deep insights into model performance and discriminative features. The findings demonstrate that machine learning approaches can effectively distinguish between false and true statements, with linguistic patterns and contextual features serving as strong indicators of statement veracity. This work contributes to the broader field of natural language processing and misinformation detection by providing a systematic methodology for binary classification of news authenticity and identifying key linguistic markers associated with false information.
+
+
+TABLE OF CONTENTS
+
+ABSTRACT											iv
+
+TABLE OF CONTENTS									v
+
+
+CHAPTER 			 TITLE 						       PAGE 
+NO.											           NO.
+
+1	INTRODUCTION									1-3
+Introduction to Project								
+Problem Statement							            	
+Motivation										
+Sustainable Development Goal of the Project					
+2	LITERATURE SURVEY								4-7
+	2.1 Overview of the Research Area								
+	2.2 Existing Models and Frameworks						
+	2.3 Limitations Identified from Literature Survey (Research Gaps)			
+      2.4 Research Objectives									
+	2.5 Product Backlog (Key user stories with Desired outcomes)			   	
+      2.5 Plan of Action (Project Road Map)                                                                              
+	
+3   SPRINT PLANNING AND EXECTION METHODOLOGY			8-13
+	3.1 SPRINT I										8
+		3.1.1 Objectives with user stories of Sprint I						
+		3.1.2 Functional Document								
+		3.1.3 Architecture Document								
+		3.1.4 Outcome of objectives/ Result Analysis						
+		3.1.5 Sprint Retrospective										3.2 SPRINT II										10
+		3.2.1 Objectives with user stories of Sprint II					
+		3.2.2 Functional Document								
+		3.2.3 Architecture Document								
+		3.2.4 Outcome of objectives/ Result Analysis						
+		3.2.5 Sprint Retrospective								
+
+	
+
+
+
+4    RESULTS AND DISCUSSIONS							14-17
+	4.1 Project Outcomes (Performance Evaluation, Comparisons, Testing Results	)			
+5    CONCLUSION AND FUTURE ENHANCEMENT					18
+REFERENCES										21
+APPENDIX											
+ A  CODING											22
+ B  SCREENSHOT										27
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CHAPTER 1
+ INTRODUCTION
+
+	1.1 Overview
+The digital age has ushered in unprecedented volumes of information flowing through various media channels, from traditional journalism to social media platforms. While this democratization of information dissemination offers numerous benefits, it has simultaneously created an environment where misinformation and deliberately fabricated news can spread rapidly and extensively. Fake news, defined as false or misleading information presented as factual reporting, poses significant threats to public discourse, democratic processes, and societal cohesion. The challenge of distinguishing authentic information from deliberate falsehoods or misleading narratives has become increasingly complex, as sophisticated techniques for creating convincing fake content continue to evolve. Traditional fact-checking relies on human expertise and manual verification processes, approaches that are fundamentally limited in scalability when confronted with the exponential growth of digital content. This scalability problem necessitates the development of automated, algorithmic approaches to news veracity detection. Machine learning, particularly natural language processing techniques combined with classification algorithms, offers a promising avenue for automating the detection and classification of false news. By analyzing linguistic patterns, contextual features, and statistical properties of statement text, machine learning models can learn to distinguish between authentic and false statements with reasonable accuracy. This project addresses the problem of binary classification for news authenticity, implementing a complete pipeline from raw data preprocessing through model training, evaluation, and visualization of results. The scope encompasses the entire machine learning lifecycle: exploratory data analysis, feature engineering, model selection and training, performance evaluation across multiple metrics, and comparative analysis of different algorithmic approaches. The ultimate goal is to develop a robust classification system that can effectively identify false news statements while minimizing false positives in the detection process.
+.
+
+
+
+
+
+
+
+
+
+1.2 Problem Statement
+The problem addressed in this project can be formally stated as follows: Given a large corpus of publicly-made statements with known veracity labels, develop a machine learning classification system capable of accurately predicting whether a previously unseen statement is false or true. This binary classification problem requires the system to learn discriminative patterns that separate false statements from authentic ones, based on textual and contextual features extracted from the statements themselves. More specifically, the challenges include: (1) handling the inherent class imbalance present in real-world datasets where false statements may not be uniformly distributed; (2) extracting meaningful features from raw text that capture the essential characteristics of false versus true statements; (3) selecting appropriate algorithms that balance accuracy with interpretability; (4) evaluating model performance using multiple metrics that account for different aspects of classification quality; and (5) generating insights into which linguistic and contextual features most strongly indicate statement falseness or authenticity. The practical impact of this problem is substantial. Automated fake news detection systems can serve as first-level filters for information verification, alerting fact-checkers to potentially problematic statements, helping social media platforms reduce misinformation spread, and supporting journalists in their research processes. Developing accurate detection systems requires understanding not just the computational aspects but also the linguistic characteristics that distinguish false from true statements
+.
+1.3 Motivation
+The motivation for this project emerges from the observation that fake news represents both a technical challenge and a societal imperative. From a technical perspective, the problem is engaging because it combines multiple disciplines: natural language processing, machine learning, data analysis, and feature engineering. The challenge of extracting meaning from raw text and using that meaning to make accurate predictions is both intellectually stimulating and practically important.
+From a broader perspective, the motivation is rooted in the recognition that information integrity is fundamental to functioning democracies and informed societies. The ability to automatically detect and flag false information could significantly reduce the spread of misinformation, support the work of professional fact-checkers, and help individuals make more informed decisions based on reliable information. As misinformation becomes increasingly sophisticated, the need for equally sophisticated detection mechanisms becomes more urgent. Additionally, this project provides an opportunity to apply and integrate multiple machine learning and data science techniques: data loading and preprocessing, exploratory data analysis, feature extraction and vectorization, training multiple distinct algorithms, comprehensive performance evaluation, and creation of advanced visualizations. Working through a complete end-to-end machine learning project develops practical skills in model development, debugging data issues, interpreting results, and communicating findings—skills essential for careers in data science and machine learning.
+
+
+1.4 Sustainable Development Goal of the Project
+This project aligns with several United Nations Sustainable Development Goals (SDGs). Most directly, it supports SDG 16: Peace, Justice and Strong Institutions, which emphasizes the importance of accountable and inclusive institutions and access to information as fundamental to democracy and rule of law. Misinformation undermines these principles by distorting public discourse and making informed decision-making difficult. Developing systems to detect and reduce the spread of fake news directly contributes to creating more trustworthy institutions and informed societies. Additionally, the project relates to SDG 10: Reduced Inequalities. Misinformation often disproportionately affects disadvantaged populations with less access to alternative information sources and fact-checking resources. Automated detection systems that are widely deployable can help level the information playing field. The project also contributes to SDG 9: Industry, Innovation and Infrastructure, through the development and application of machine learning innovations to address real-world problems.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CHAPTER 2 
+LITERATURE SURVEY
+
+2.1 Overview
+The field of fake news detection and misinformation identification has emerged as a significant research area within natural language processing and computational social science over the past decade. Early approaches to identifying misinformation focused on analyzing source credibility, author reputation, and network patterns. However, as the sophistication of misinformation increased, research shifted toward lingu. The research landscape encompasses several related subfields: veracity prediction (predicting the truthfulness of claims), rumor detection (identifying false or unverified information on social media), stance detection (determining the position of text relative to claims), and claim verification (assessing whether evidence supports specific claims). The methods developed in these related areas often share common preprocessing techniques, feature extraction strategies, and machine learning algorithms, though they may differ in their specific objectives and evaluation metrics. Key trends in the field include the increasing use istic and content-based analysis methods. Contemporary approaches leverage advances in deep learning, transformer-based models, and ensemble techniques to achieve higher detection accuracy of deep learning approaches, particularly recurrent neural networks (RNNs), convolutional neural networks (CNNs), and more recently, transformer-based models like BERT. There is also growing recognition of the importance of cross-domain validation, as models trained on one type of misinformation may not transfer well to other domains. Additionally, researchers increasingly acknowledge that perfect accuracy may be unrealistic; instead, the focus has shifted to understanding which types of false statements are detectable and which remain challenging, and to developing systems that augment rather than replace human fact-checkers
+2.2 Existing Models and Frameworks
+
+Comparative Analysis of Existing Approaches: The reviewed literature reveals several important patterns in the evolution of fake news detection methods. Early approaches relied primarily on traditional machine learning algorithms (Support Vector Machines, Logistic Regression) combined with hand-crafted linguistic features. These methods, while interpretable and computationally efficient, were limited by the quality of manual feature engineering. Subsequent developments introduced automated feature learning through deep neural networks, which consistently achieved higher accuracy but at the cost of reduced interpretability. The LIAR dataset, which is used in this project, emerged as a crucial benchmark in the field, established by Wang et al. (2017). This dataset contains 12,800 short statements from public figures labeled with verified veracity labels on a 6-point scale, which is commonly collapsed to binary labels (false vs. true) for simplified classification tasks. The availability of this standardized benchmark enabled comparative evaluation across different methodologies. Deep learning approaches, particularly bidirectional LSTM networks and transformer-based models, have demonstrated superior performance compared to traditional machine learning methods. The integration of attention mechanisms and domain-adversarial training further improved robustness across different sources and domains. However, these advances come with increased computational requirements and reduced interpretability compared to simpler models.
+2.3 Limitations Identified from Literature Survey (Research Gaps)
+Despite significant progress in fake news detection, several important research gaps and limitations persist:
+Limited Transferability: Models trained on one domain or type of misinformation often fail to generalize well to other domains. A model trained on political statements may not perform well on health-related claims. This suggests that misinformation patterns may be domain-specific, and that robust detection requires either domain-adapted models or very large training sets covering diverse content.
+Explainability and Interpretability: While deep learning models achieve higher accuracy, they provide limited insights into which specific features and patterns lead to false news identification. For practical fact-checking applications, understanding the reasoning behind classifications is often as important as accuracy itself. This gap between performance and interpretability motivates the continued development of more interpretable models.
+Class Imbalance and Rare False Statements: In many real-world scenarios, false statements are less common than true ones, creating class imbalance problems. Additionally, novel types of misinformation may not be well-represented in training data. Models trained on existing false news may fail to detect emerging false statements with new characteristics
+Temporal Dynamics: Most research treats statements as static snapshots. However, the veracity of statements may depend on temporal context—what is false at one time may be true later (or vice versa). Understanding how statement veracity changes over time and how models should be updated with new information remains an open problem.
+Linguistic Sophistication of Modern Misinformation: As detection systems improve, those creating misinformation adapt their techniques to evade detection. The adversarial nature of the problem means that solutions must constantly evolve to address new obfuscation and manipulation techniques.
+2.4 Research Objectives
+The primary objectives of this research project are:
+Implement a complete machine learning pipeline for binary classification of news statements as false or true, demonstrating practical application of the complete data science workflow from data loading through model deployment.
+Compare multiple classification algorithms (Logistic Regression, Decision Trees, Gradient Boosting, and Random Forest) on the same feature space to understand the relative strengths and weaknesses of different approaches for this specific problem
+. Achieve high classification accuracy through careful feature engineering using TF-IDF vectorization with both unigram and bigram features, targeting accuracy above 70% on test data.
+Generate interpretable insights into which linguistic features and patterns most strongly indicate false versus true statements, through feature importance analysis and visualization
+Develop comprehensive evaluation methodology using multiple metrics (accuracy, precision, recall, F1-score) and visualization techniques (ROC curves, confusion matrices, feature importance plots) to thoroughly understand model performance.
+Create advanced visualizations that communicate results effectively, including scatter plots of predictions, ROC curves with AUC metrics, TF-IDF feature importance bar charts, and text length distribution analysis
+2.5 Product Backlog (Key User Stories with Desired Outcomes)
+User Story 1: As a data scientist, I want to load and explore the LIAR dataset, so that I understand its structure, size, and characteristics before developing the classification model.
+ Desired Outcome: Complete exploratory data analysis showing dataset statistics, label distribution, feature characteristics, and text length statistics.
+User Story 2: As a researcher, I want to preprocess raw text statements through tokenization, cleaning, and vectorization, so that the data is suitable for machine learning algorithms.
+ Desired Outcome: Implemented preprocessing pipeline producing TF-IDF feature vectors ready for model training
+
+User Story 3: As a machine learning engineer, I want to train multiple classification algorithms, so that I can compare their performance and select the best approach. 
+Desired Outcome: Trained and evaluated Logistic Regression, Decision Tree, Gradient Boosting, and Random Forest models with performance metrics for each.
+User Story 4: As an analyst, I want to generate visualizations showing model performance, predictions, and feature importance, so that I can understand how models work and which features matter most.
+Desired Outcome: Comprehensive visualizations including ROC curves, feature importance plots, prediction scatter plots, and histogram distributions.
+User Story 5: As a fact-checker, I want to identify which linguistic patterns indicate false statements, so that I can better understand common characteristics of misinformation.
+ Desired Outcome: Ranked list of top false-statement-indicating words and true-statement-indicating words with importance score
+
+
+
+2.6 Plan of Action (Project Roadmap)
+
+Phase 1: Data Preparation (Week 1)
+
+Load LIAR dataset from CSV files 
+Perform exploratory data analysis
+Analyze label distribution and text characteristics 
+Verify data quality and handle missing values
+
+Phase 2: Preprocessing and Feature Engineering (Week 2)
+
+Implement text cleaning pipeline (lowercase, punctuation removal, URL removal) 
+Create TF-IDF vectorizer with unigram and bigram features
+Apply vectorization to train, validation, and test sets
+Document feature statistics
+
+Phase 3: Model Development (Week 3)
+
+Implement Logistic Regression classifier 
+Implement Decision Tree classifier 
+Implement Gradient Boosting classifier Implement Random Forest classifier 
+Train all models on training data
+
+Phase 4: Evaluation and Validation (Week 3-4)
+
+Evaluate all models on validation set 
+Calculate accuracy, precision, recall, F1-score for each model 
+Generate confusion matrices 
+Identify best-performing model(s)
+
+Phase 5: Advanced Visualization (Week 4)
+
+Create ROC curves with AUC scores 
+Generate feature importance plots 
+Create scatter plots of predictions 
+Generate text length distribution histograms 
+Create comparison visualizations
+
+Phase 6: Testing and Reporting (Week 5)
+
+Evaluate final models on test set
+Generate test set performance metrics
+Prepare comprehensive report 
+Document findings and conclusions
+CHAPTER 3 
+SPRINT PLANNING AND EXECUTION METHODOLOGY
+
+3.1 Overview
+3.1.1 SPRINT I
+3.1.1 Objectives with User Stories of Sprint I
+Objective 1: Successfully load and parse the LIAR dataset in its CSV format, handling data quality issues and ensuring all 14 features are correctly extracted.
+User Story: As a data engineer, I want to robustly load the LIAR dataset from CSV files, handling parsing issues and malformed rows, so that I can work with clean data.
+Objective 2: Perform comprehensive exploratory data analysis to understand dataset characteristics, label distribution, and feature properties.
+User Story: As a data analyst, I want to analyze the complete dataset structure including label frequencies, text length statistics, and feature ranges, so that I understand what I'm working with before model development.
+3.1.2 Functional Document
+Data Loading Requirements:
+Load three CSV files: train.csv (10,007 samples), valid.csv (1,283 samples), test.csv (1,224 samples) 
+Handle comma-separated format with proper escaping and quoting
+Parse 14 columns: id, label, statement, subjects, speaker, speaker_job, state, party, barely_true_ct, false_ct, half_true_ct, mostly_true_ct, pants_on_fire_ct, context Skip malformed rows without terminating execution
+Preserve data types: strings for text fields, numeric for count fields
+Data Quality Operations:
+Identify and report missing values 
+Verify label values conform to expected vocabulary 
+Check for duplicate entries
+     Validate numeric field ranges
+
+
+      Exploratory Data Analysis Functions:
+print_basic_stats(): Calculate and display mean, median, and standard deviation for numeric features analyze_label_distribution(): Show frequency distribution of label values
+analyze_text_length(): Calculate statement length statistics (min, max, mean, median) visualize_correlations(): Generate correlation heatmaps for numeric features
+generate_boxplots(): Create boxplots for feature distributions
+
+3.1.3 Architecture Document
+The architecture for the model training phase includes the following layers:
+
+
+Technology Stack:
+Python 3.x pandas 
+Data loading and manipulation
+numpy: Numerical operations 
+matplotlib and seaborn: Visualization
+
+3.1.4 Outcome of Objectives / Result Analysis
+Dataset Statistics Achieved:
+Total samples: 12,514 (10,007 train + 1,283 valid + 1,224 test) 
+Features per sample: 14 
+Label distribution in training set: 
+   Half-true: 20.68% 
+   False: 19.50%
+   Mostly-true: 19.14% 
+   True: 16.35% 
+   Barely-true: 16.17% 
+   Pants-fire: 8.17%
+Text Characteristics:
+Average statement length: 18.66 words
+Minimum: 2 words, Maximum: 1,544 words 
+Median: 17 words
+This indicates substantial variation in statement length, relevant for feature extraction
+Data Quality:
+Successfully loaded all samples with minimal data loss (< 1% malformed rows skipped)
+No significant missing values in key fields 
+All labels properly recognized and mapped to binary classes
+   3.1.5 Sprint Retrospective
+What Went Well:
+Data loading pipeline correctly handles CSV format with error resilience
+Exploratory analysis revealed important characteristics of the dataset
+Label distribution is reasonably balanced, preventing severe class imbalance issues 
+Dataset size is substantial enough for meaningful machine learning model training
+
+
+
+Challenges Encountered:
+Initial confusion about data format (CSV with comma separator vs. TSV with tab separator)—resolved by testing both 
+Some rows contain additional fields or special characters—handled with on_bad_lines='skip' 
+Label inconsistency (dashes vs. underscores in label names)—normalized through mapping
+Improvements for Next Sprint:
+Implement automatic format detection to avoid manual separator selection 
+Create comprehensive data validation report as first step of pipeline 
+Document data quality assumptions and filtering criteria
+3.2 SPRINT II
+3.2.1 Objectives with User Stories of Sprint II
+Objective 1: Implement comprehensive text preprocessing that cleans raw statements and produces normalized text suitable for feature extraction. 
+User Story: As an NLP engineer, I want to preprocess text by removing noise, normalizing case, and standardizing content, so that the text is in optimal form for feature extraction.
+ Objective 2: Implement TF-IDF vectorization with unigram and bigram features to convert text into machine-readable numerical features.
+ User Story: As a machine learning engineer, I want to extract TF-IDF features from preprocessed text, capturing both individual word importance and word pair relationships, so that I have rich features for model training.
+ Objective 3: Train multiple classification models and establish baseline performance metrics.
+ User Story: As a data scientist, I want to train Logistic Regression, Decision Trees, Gradient Boosting, and Random Forest models, so that I can compare their effectiveness for this classification task.
+3.2.2 Functional Document
+Text Preprocessing Pipeline:
+The preprocessing pipeline applies the following transformations to each text statement:
+1. Lowercase Conversion: Convert all text to lowercase to treat different cases as equivalent 
+2. Bracket Content Removal: Remove content in brackets [...] and replace with space
+3. URL Removal: Remove URLs matching patterns like http://... or www......
+
+4. HTML Tag Removal: Remove HTML tags like <tag> using regex patterns 
+5. Punctuation Removal: Remove all punctuation characters using string.punctuation
+6. Number Removal: Remove words containing digits 
+7. Special Character Normalization: Replace multiple special characters with single space
+ 8.Whitespace Normalization: Replace multiple consecutive spaces with single space, strip leading/trailing
+Feature Extraction Configuration:
+Vectorizer: Tf-idfVectorizer from scikit-learn 
+N-gram range: (1, 2) — both unigrams and bigrams 
+Minimum document frequency: 2 (feature appears in at least 2 documents) 
+Maximum document frequency: 0.9 (feature appears in at most 90% of documents)
+Sublinear TF scaling: True (applies sublinear term frequency scaling) 
+Output: Sparse matrix of shape (n_samples, n_features)
+Label Mapping:
+Binary classification: False (0) and True (1) 
+Mapping: 
+  pants-fire, false → 0 (False) 
+  barely-true, half-true, mostly-true, true → 1 (True)
+Model Training Configuration:
+Logistic Regression: max_iter=1000, default regularization 
+Decision Tree: random_state=0, default tree depth 
+Gradient Boosting: random_state=0, default parameters 
+Random Forest: n_estimators=300, random_state=0
+3.2.3 Architecture Document
+ 
+
+
+
+
+
+
+
+
+3.2.4 Outcome of Objectives / Result Analysis
+Preprocessing Results:
+Successfully cleaned 12,514 statements through the complete preprocessing pipeline 
+Average text reduction: ~15% (removal of punctuation, special characters, URLs) 
+No statements lost during preprocessing (robust error handling) 
+All statements successfully mapped to binary labels
+Feature Extraction Results:
+Feature Dimension: 8,087 features extracted using TF-IDF with unigram and bigram
+ Feature Sparsity: Approximately 99% sparse (most samples have 0 values for most features) 
+Training Set: Vectorized to sparse matrix (10,007 × 8,087) 
+Validation Set: Vectorized to sparse matrix (1,283 × 8,087) 
+Test Set: Vectorized to sparse matrix (1,224 × 8,087)
+Model Training Results:
+
+All four models successfully trained on the vectorized training data without convergence issues or errors.
+
+
+
+
+
+
+
+3.2.5 Sprint Retrospective
+What Went Well:
+Text preprocessing pipeline is robust and handles diverse input variations 
+TF-IDF vectorization produces reasonable feature space (8,087 dimensions) 
+All models train successfully without issues 
+Feature dimension is computationally manageable while capturing sufficient information
+Challenges Encountered:
+Large feature space (8,087 dimensions) could lead to overfitting with smaller models 
+Decision tree shows signs of overfitting during initial evaluation
+Some rare features appear in single documents and may be noise
+Improvements for Next Sprint:
+Evaluate potential for dimensionality reduction (PCA, feature selection) 
+Consider adjusting max_df and min_df thresholds 
+Implement cross-validation for more robust evaluation 
+Analyze feature importance to identify most discriminative terms
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CHAPTER 4 
+RESULTS AND DISCUSSIONS
+
+4.1 Project Outcomes
+The project titled “Fake News Detection Using Machine Learning” successfully achieved its goal of automatically classifying news statements as true or false using natural language processing and supervised machine learning techniques.
+A complete end-to-end pipeline was developed, starting from text preprocessing and feature extraction to model training, evaluation, and visualization. The LIAR dataset—containing 12,514 fact-checked statements—was used to train and validate multiple models, including Logistic Regression, Decision Tree, Gradient Boosting, and Random Forest.
+The system performs three main functions effectively:
+Text Preprocessing and Vectorization – Raw textual data is cleaned, tokenized, and transformed into numerical features using TF-IDF with unigram and bigram representations.
+Model Training and Prediction – The processed text is passed through trained classification models to predict whether a statement is true or false.
+Performance Analysis and Visualization – Multiple evaluation metrics (accuracy, precision, recall, F1-score) and visual tools (ROC curves, confusion matrices, and feature importance charts) are generated to analyze model behavior.
+The final implementation demonstrated that traditional machine learning models, when combined with well-engineered text features, can effectively detect misinformation. The system achieved a maximum accuracy of 74.51% on unseen test data, confirming its robustness and real-world applicability.
+
+4.1.1 Performance Evaluation
+The performance of each model was evaluated using both validation and test datasets. Logistic Regression emerged as the most balanced model in terms of accuracy, interpretability, and stability, while Gradient Boosting achieved the highest numerical accuracy.
+
+
+
+
+
+
+
+
+The Logistic Regression model displayed excellent recall (97%) for true statements and moderate performance for false statements (13% recall), reflecting the dataset’s natural imbalance. Gradient Boosting slightly outperformed others in accuracy but required longer training times.
+Feature importance analysis revealed that linguistic patterns and specific word usage were strong predictors of veracity, aligning with known stylistic tendencies in false statements.
+4.1.2 Comparisons
+To evaluate effectiveness, the proposed system was compared against previous studies and common approaches from literature.
+
+While advanced transformer-based models like BERT achieve slightly higher accuracy, they require significant computational power and lack transparency.
+The proposed models strike an optimal balance between accuracy, speed, and explainability, making them well-suited for practical deployment on standard computing systems.
+4.1.3 Testing Results
+The testing phase assessed model generalization and prediction reliability using the held-out test set and additional evaluation visualizations
+The model demonstrated stable generalization across the test set, consistent accuracy levels, and effective feature interpretation. Minor limitations were observed in detecting minority (false) classes due to dataset imbalance, but overall, performance was strong and reproducible
+  
+
+
+ 4.2 Discussion
+The proposed fake news detection system effectively integrates natural language processing and machine learning for automated misinformation detection. The workflow—combining TF-IDF vectorization with classical classifiers—proved both efficient and interpretable.
+
+Key observations during experimentation include:
+TF-IDF features with unigrams and bigrams significantly enhanced model accuracy and feature interpretability.
+Logistic Regression provided nearly the same accuracy as Gradient Boosting, confirming the strength of linear models for textual data.
+Class imbalance influenced recall for false statements, suggesting future use of resampling or class weighting.
+Feature importance visualization revealed that exaggerated or emotionally charged words frequently indicated false statements.
+The system’s results show that fake news detection can be achieved with high reliability using explainable ML techniques, even without deep neural networks.
+This project highlights the practicality of traditional models in real-world misinformation screening, offering a foundation for future enhancements such as deep learning integration, real-time web monitoring, and cross-domain generalization.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CHAPTER 5 
+CONCLUSION AND FUTURE ENHANCEMENTS
+
+5.1 Conclusion
+The project “Fake News Detection Using Machine Learning” successfully demonstrates the application of Natural Language Processing (NLP) and supervised learning algorithms in identifying and classifying news statements as true or false. By leveraging the LIAR dataset, the system processed textual data through stages of preprocessing, feature extraction using TF-IDF, and classification using multiple machine learning models such as Logistic Regression, Decision Tree, Random Forest, and Gradient Boosting.
+Among the tested models, Gradient Boosting achieved the highest accuracy (74.51%), while Logistic Regression proved to be the most balanced and interpretable model, achieving 74.20% accuracy and an ROC-AUC score of 0.82. The system efficiently handled real-world textual data and generated reliable predictions supported by performance visualizations and feature importance analysis.
+Through comprehensive experimentation, the project achieved its primary objectives by:
+• Developing an end-to-end fake news detection pipeline using machine learning,
+• Implementing efficient preprocessing and feature extraction methods,
+• Evaluating and comparing multiple supervised models for accuracy and interpretability, and
+• Demonstrating the potential of traditional ML methods in combating misinformation.
+Overall, the system successfully bridges the gap between theoretical text classification models and real-world misinformation detection. It underscores the importance of explainable AI in maintaining information credibility, providing a foundation for future enhancements in automated fact-checking systems.
+
+
+
+
+
+
+
+
+
+
+
+
+
+5.2 Future Enhancements
+Although the system met its objectives effectively, several enhancements can be introduced to improve scalability, performance, and adaptability for future applications:
+ Integration of Deep Learning Models:
+Implement transformer-based architectures such as BERT or RoBERTa to improve contextual understanding and accuracy.
+Class Imbalance Handling:
+Apply resampling methods (SMOTE), class weighting, or threshold tuning to improve recall for minority (false) classes.
+Real-Time Fake News Detection:
+Develop a live web-based or social media monitoring system that can analyze news headlines or posts in real time.
+Explainability Dashboard:
+Create a visualization interface that highlights influential words or phrases contributing to the model’s predictions, improving transparency for users.
+Multilingual Support:
+Extend the system to process and classify news in multiple languages, increasing its global applicability.
+Hybrid Model Approach:
+Combine traditional ML with deep learning to balance interpretability and accuracy.
+Database Integration:
+Incorporate APIs from fact-checking organizations (e.g., PolitiFact, Snopes) for continuous model retraining and dataset enrichment.
+Deployment and Optimization:
+Convert the trained model into lightweight deployable formats (e.g., ONNX or TensorFlow Lite) for integration into web or mobile applications.
+By implementing these improvements, the project can evolve into a scalable, real-time, and user-friendly system capable of detecting misinformation across multiple domains and platforms.
+
+
+
+
+
+
+5.3 Final Remarks
+The successful development and evaluation of this project highlight the growing necessity of AI-driven misinformation detection systems in the digital era. By combining machine learning, NLP, and data analysis, the project contributes to building tools that enhance information reliability and digital literacy.
+This work demonstrates that interpretable and efficient ML models—such as Logistic Regression and Gradient Boosting—can perform competitively while maintaining transparency and computational efficiency. As misinformation becomes increasingly complex, the integration of explainable AI and advanced NLP models will be essential to preserve truthfulness in information dissemination.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+REFERENCES
+
+
+
+Ekman, P., & Friesen, W. V. (1971). Constants across cultures in the face and emotion. Journal of Personality and Social Psychology, 17(2), 124–129. https://doi.org/10.1037/h0030377
+
+Krizhevsky, A., Sutskever, I., & Hinton, G. E. (2012). ImageNet classification with deep convolutional neural networks. Advances in Neural Information Processing Systems (NIPS), 25, 1097–1105. https://papers.nips.cc/paper_files/paper/2012/hash/c399862d3b9d6b76c8436e924a68c45b-Abstract.html
+
+Mollahosseini, A., Hasani, B., & Mahoor, M. H. (2017). AffectNet: A database for facial expression, valence, and arousal computing in the wild. IEEE Transactions on Affective Computing, 10(1), 18–31. https://ieeexplore.ieee.org/document/8013713
+
+Serengil, S., & Ozpinar, A. (2020). LightFace: A hybrid deep face recognition framework. 2020 Innovations in Intelligent Systems and Applications Conference (ASYU), IEEE. https://ieeexplore.ieee.org/document/9259802
+
+OpenCV Library. (2023). Open Source Computer Vision Library. Retrieved from https://opencv.org/
+
+Kaggle Dataset. (2023). Facial Emotion Recognition (FER2013). Retrieved from https://www.kaggle.com/datasets/msambare/fer2013
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+APPENDIX A 
+CODING
+
+A.1.1 Importing Libraries
+
+
+
+A.1.2 Loading and Preprocessing the Dataset
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+A.1.3 Feature Extraction and Preprocessing
+
+
+
+
+A.1.5 CNN Model Architecture
+
+
+
+
+
+A.1.6 Model Training and Saving
+
+
+
+
+
+
+A.2 Real-Time Emotion Detection Code (realtimedetection.py)
+This section contains the main script for real-time facial emotion recognition using the trained CNN model integrated with OpenCV.
+
+A.2.1 Importing Libraries and Loading Model
+
+
+
+
+These libraries are used for:
+cv2 (OpenCV) – Real-time video capture and face detection
+keras.models – Loading the pre-trained CNN model
+numpy – Handling image arrays
+os – File and folder operations
+datetime – Timestamp generation for emotion history logging
+
+A.2.2 Loading the Trained Model and Haar Cascade
+
+
+	
+The model (facialemotionmodel.h5) is the CNN trained using the FER-2013 dataset.
+The Haar Cascade Classifier detects faces in real-time frames before classification.
+
+A.2.3 Defining Preprocessing Function
+
+
+
+This function prepares each detected face for emotion prediction by resizing, reshaping, and normalizing it for input to the CNN model.
+
+A.2.3 Real-Time Detection and Emotion Prediction
+
+
+
+Explanation:
+Captures live video frames from the webcam.
+Detects faces using Haar Cascade.
+Extracts facial regions, preprocesses them, and sends them to the CNN for prediction.
+Displays emotion labels on-screen and saves frames with timestamps.
+Stops execution when ‘q’ is pressed.
+
+A.2.5 Summary
+The above code enables real-time detection and logging of facial emotions using the pre-trained CNN model.
+Key functionalities include:
+Continuous video frame processing
+Efficient face detection and emotion classification
+Emotion label overlay on live video
+Automatic saving of detected frames with timestamps for emotion history analysis
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+APPENDIX B 
+SCREENSHOTS
+
+Figure B.1 – Dataset Structure (FER-2013)
+
+
+
+Figure B.2 – Sample Grayscale Emotion Images
+
+       
+
+     
+
+       
+
+The emotions: Angry, Disgust, Fear, Happy, Neutral, Sad, Surprise
+
+
+
+
+Figure B.3 – Model Training in Progress (Jupyter Notebook)
+
+
+
+
+
+
+
+
+
+
+Figure B.4 – Accuracy vs Epoch Graph
+
+
+
+Figure B.5 – Loss vs Epoch Graph
+
+
+
+
+Figure B.8 – Real-Time Emotion Detection Interface
+
+          
+
+
+This appendix illustrates the full sequence of operations — from dataset preprocessing and model training to live detection and emotion logging.
+All screenshots verify that the proposed Real-Time Facial Emotion Detection System performs effectively and records emotion history accurately.
+
+This is a test doc for everything
